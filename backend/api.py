@@ -33,10 +33,26 @@ def get_emails():
         "emails": emails_from_db
     }
 
+import os
+
 @app.get("/api/sync")
 def sync_emails():
     try:
-        subprocess.run([sys.executable, "email_reader.py"], check=True)
+        
+        script_path = os.path.join(os.path.dirname(__file__), "email_reader.py")
+        
+      
+        result = subprocess.run(
+            [sys.executable, script_path], 
+            capture_output=True, 
+            text=True, 
+            check=True
+        )
         return {"status": "success", "message": "New emails fetched successfully!"}
+        
+    except subprocess.CalledProcessError as e:
+        error_details = e.stderr if e.stderr else str(e)
+        return {"status": "error", "message": f"Script crashed: {error_details}"}
+        
     except Exception as e:
         return {"status": "error", "message": str(e)}
