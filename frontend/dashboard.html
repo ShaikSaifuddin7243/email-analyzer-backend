@@ -1,23 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Email Analyzer Dashboard</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f7f6; padding: 20px; }
-        h1 { color: #333; }
-        .dashboard { display: grid; gap: 15px; }
-        .email-card { 
-            background: white; padding: 15px; border-radius: 8px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-left: 5px solid #007bff;
-        }
-        .newsletter { border-left-color: #ff4757; } /* Red for newsletters */
-        .meta { color: #666; font-size: 0.9em; margin-bottom: 10px; }
-        .tag { 
-            background: #ffeaa7; padding: 3px 8px; border-radius: 12px; 
-            font-size: 0.8em; font-weight: bold;
-        }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -25,67 +11,12 @@
     <h3 id="email-count">Loading emails...</h3>
 
     <div style="width: 400px; margin-bottom: 30px;">
-    <canvas id="newsletterChart"></canvas>
+        <canvas id="newsletterChart"></canvas>
     </div>
     
     <div id="email-container" class="dashboard">
         </div>
 
-    <script>
-        // 1. Fetch the ugly JSON from your API
-fetch('http://127.0.0.1:8000/api/emails')
-    .then(response => response.json())
-    .then(data => {
-        
-        document.getElementById('email-count').innerText = `Total Analyzed: ${data.total_emails}`;
-        
-        const container = document.getElementById('email-container');
-        container.innerHTML = ''; 
-        
-        // --- YOUR NEW LOGIC STARTS HERE ---
-        let newsCount = 0;
-        let realCount = 0;
-
-        data.emails.forEach(email => {
-            // Count the emails based on your logic
-            if (email.stats.is_newsletter) {
-                newsCount++;
-            } else {
-                realCount++;
-            }
-        // --- YOUR NEW LOGIC ENDS HERE ---
-
-            // (Keep your existing code that builds the HTML cards here)
-            const isNews = email.stats.is_newsletter ? 'newsletter' : '';
-            const tagHtml = email.stats.is_newsletter ? '<span class="tag">Newsletter</span>' : '';
-
-            const card = `
-                <div class="email-card ${isNews}">
-                    <h3>${email.subject} ${tagHtml}</h3>
-                    <div class="meta">
-                        <strong>From:</strong> ${email.sender_name} (${email.sender_email})<br>
-                        <strong>Length:</strong> ${email.stats.char_count} characters
-                    </div>
-                </div>
-            `;
-            container.innerHTML += card;
-        });
-
-        const ctx = document.getElementById('newsletterChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'pie', // Tells Chart.js what shape to draw
-            data: {
-                labels: ['Newsletters', 'Real Emails'],
-                datasets: [{
-                    data: [newsCount, realCount], // We plug your variables in here!
-                    backgroundColor: ['#ff4757', '#2ed573'] // Red for junk, Green for good
-                }]
-            }
-        });
-
-    })
-    .catch(error => console.error('Error fetching data:', error));
-    </script>
-
+    <script src="script.js"></script>
 </body>
 </html>
