@@ -9,12 +9,22 @@ fetch('https://email-analyzer-backend-dbo0.onrender.com/api/emails')
 
         let newsCount = 0;
         let realCount = 0;
+        let senderCounts = {};
 
         data.emails.forEach(email => {
             if (email.stats.is_newsletter) {
                 newsCount++;
             } else {
                 realCount++;
+            }
+            const sender = email.sender_email;
+            if (senderCounts[sender]) {
+                senderCounts[sender].count++; // If we've seen them, add 1
+            } else {
+                senderCounts[sender] = { 
+                    count: 1, 
+                    name: email.sender_name || sender 
+                };
             }
 
             const isNews = email.stats.is_newsletter ? 'newsletter' : '';
@@ -42,6 +52,23 @@ fetch('https://email-analyzer-backend-dbo0.onrender.com/api/emails')
                     backgroundColor: ['#ff4757', '#2ed573'] 
                 }]
             }
+        });
+
+        const sortedSenders = Object.entries(senderCounts)
+            .map(([email, info]) => ({ email, name: info.name, count: info.count }))
+            .sort((a, b) => b.count - a.count) 
+            .slice(0, 3); 
+
+        const senderList = document.getElementById('sender-list');
+        senderList.innerHTML = ''; 
+        
+        sortedSenders.forEach(sender => {
+            senderList.innerHTML += `
+                <li>
+                    <span><strong>${sender.name}</strong><br><small style="color: #666;">${sender.email}</small></span>
+                    <span class="tag" style="background: #dfe6e9;">${sender.count} emails</span>
+                </li>
+            `;
         });
 
     })
