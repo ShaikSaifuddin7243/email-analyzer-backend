@@ -73,3 +73,32 @@ fetch('https://email-analyzer-backend-dbo0.onrender.com/api/emails')
 
     })
     .catch(error => console.error('Error fetching data:', error));
+
+
+document.getElementById('sync-btn').addEventListener('click', () => {
+    const btn = document.getElementById('sync-btn');
+    btn.innerText = "⏳ Syncing with Gmail...";
+    btn.disabled = true; // Prevent double-clicking
+    btn.style.background = "#ccc";
+
+    // Call your new FastAPI sync route
+    fetch('https://email-analyzer-backend-dbo0.onrender.com/api/sync')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                btn.innerText = "✅ Sync Complete!";
+                btn.style.background = "#2ed573";
+                // Reload the page after 1.5 seconds to show the new data
+                setTimeout(() => window.location.reload(), 1500); 
+            } else {
+                alert("Error syncing emails. Check console.");
+                console.error(data);
+                btn.innerText = "❌ Sync Failed";
+                btn.style.background = "#ff4757";
+            }
+        })
+        .catch(error => {
+            console.error('Error triggering sync:', error);
+            btn.innerText = "❌ Network Error";
+        });
+});

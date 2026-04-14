@@ -3,6 +3,8 @@ import os
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
+import sys
+import subprocess
 
 app = FastAPI()
 
@@ -30,3 +32,11 @@ def get_emails():
         "total_emails": len(emails_from_db),
         "emails": emails_from_db
     }
+
+@app.get("/api/sync")
+def sync_emails():
+    try:
+        subprocess.run([sys.executable, "email_reader.py"], check=True)
+        return {"status": "success", "message": "New emails fetched successfully!"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
