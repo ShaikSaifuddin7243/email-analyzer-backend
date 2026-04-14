@@ -14,7 +14,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-client = MongoClient(os.getenv("Mongo_URI"))
+client = MongoClient(os.getenv("MONGO_URI"))
 
 db = client['email_analyzer']
 collection = db['emails']
