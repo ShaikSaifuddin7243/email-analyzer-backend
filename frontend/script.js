@@ -35,6 +35,7 @@ fetch('https://email-analyzer-backend-dbo0.onrender.com/api/emails')
                     <h3>${email.subject} ${tagHtml}</h3>
                     <div class="meta">
                         <strong>From:</strong> ${email.sender_name} (${email.sender_email})<br>
+                        <strong>Timestamp:</strong> ${email.timestamp}<br>
                         <strong>Length:</strong> ${email.stats.char_count} characters
                     </div>
                 </div>
